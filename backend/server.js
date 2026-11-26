@@ -38,6 +38,17 @@ app.get('/health', (req, res) => {
   });
 });
 
+// DB connection test
+app.get('/api/dbtest', async (req, res) => {
+  const pool = require('./backend/config/database');
+  try {
+    const result = await pool.query('SELECT NOW() as time, current_database() as db');
+    res.json({ connected: true, ...result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ connected: false, error: err.message, code: err.code });
+  }
+});
+
 // One-time seed endpoint (protected by secret)
 app.post('/api/setup', async (req, res) => {
   const { secret } = req.body;
