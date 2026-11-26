@@ -98,7 +98,10 @@ async function seed() {
   } catch (error) {
     console.error('Error seeding database:', error);
   } finally {
-    await pool.end();
+    // Only close pool if running standalone (not required by start.js)
+    if (require.main === module) {
+      await pool.end();
+    }
   }
 }
 

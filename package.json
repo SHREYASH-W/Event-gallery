@@ -4,7 +4,7 @@
   "description": "Direct UPI payment system for event photos",
   "main": "index.js",
   "scripts": {
-    "start": "node backend/scripts/setupDatabase.js && node backend/scripts/seed.js && node backend/server.js",
+    "start": "node backend/scripts/start.js",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "server": "nodemon backend/server.js",
     "client": "cd frontend && npm run dev",
