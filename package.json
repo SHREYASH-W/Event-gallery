@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node backend/server.js",
+    "build": "node backend/scripts/setupDatabase.js && node backend/scripts/seed.js",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "server": "nodemon backend/server.js",
     "client": "cd frontend && npm run dev",

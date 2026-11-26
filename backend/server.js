@@ -33,6 +33,22 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// One-time seed endpoint (protected by secret)
+app.post('/api/setup', async (req, res) => {
+  const { secret } = req.body;
+  if (secret !== (process.env.WEBHOOK_SECRET || 'celebrare_secret_key_2024')) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  try {
+    const { execSync } = require('child_process');
+    execSync('node backend/scripts/setupDatabase.js', { stdio: 'inherit' });
+    execSync('node backend/scripts/seed.js', { stdio: 'inherit' });
+    res.json({ success: true, message: 'Database setup and seeded successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // API Routes
 app.use('/api/photographers', photographersRoutes);
 app.use('/api/events', eventsRoutes);
