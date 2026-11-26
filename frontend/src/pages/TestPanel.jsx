@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 
 const SCENARIOS = [
   { id: 'success',   label: 'Successful Payment',    icon: '✓', color: 'btn-success', desc: 'Trusted bank email, valid amount, within window' },
@@ -44,7 +44,7 @@ function TestPanel() {
 
   const fetchEvents = async () => {
     try {
-      const res = await axios.get('/api/events');
+      const res = await api.get('/api/events');
       setEvents(res.data);
       if (res.data.length > 0) setSelectedEvent(String(res.data[0].id));
     } catch (e) { console.error(e); }
@@ -52,7 +52,7 @@ function TestPanel() {
 
   const fetchPhotos = async (eventId) => {
     try {
-      const res = await axios.get(`/api/events/${eventId}/photos`);
+      const res = await api.get(`/api/events/${eventId}/photos`);
       setPhotos(res.data);
     } catch (e) { console.error(e); }
   };
@@ -67,7 +67,7 @@ function TestPanel() {
   const createPaymentRequest = async () => {
     if (selectedPhotos.length === 0) return alert('Select at least one photo');
     try {
-      const res = await axios.post('/api/payments/request', {
+      const res = await api.post('/api/payments/request', {
         event_id:    parseInt(selectedEvent),
         guest_email: guestEmail,
         photo_ids:   selectedPhotos,
@@ -135,7 +135,7 @@ function TestPanel() {
       } else if (scenario === 'late') {
         // Expire the current pending request first
         try {
-          await axios.post(`/api/payments/request/${paymentRequest.request_id}/expire`);
+          await api.post(`/api/payments/request/${paymentRequest.request_id}/expire`);
         } catch (e) { /* ignore — may already be expired */ }
         id      = genTxnId();
         trusted = true;
@@ -144,7 +144,7 @@ function TestPanel() {
       const event = events.find(e => String(e.id) === String(selectedEvent));
       const photographerEmail = event?.photographer_email || 'shreyashsingh205@gmail.com';
 
-      const res = await axios.post('/api/webhook/test-bank-email', {
+      const res = await api.post('/api/webhook/test-bank-email', {
         photographerEmail,
         amount:        total(),
         transactionId: id,
@@ -160,7 +160,7 @@ function TestPanel() {
 
       // If confirmed, fetch unlocked photos and advance to step 3
       if (res.data.success) {
-        const ph = await axios.get(`/api/payments/request/${res.data.requestId}/photos`);
+        const ph = await api.get(`/api/payments/request/${res.data.requestId}/photos`);
         setUnlocked(ph.data);
         setStep(3);
       }
@@ -479,3 +479,4 @@ function Row({ label, value, gold, mono, last }) {
 }
 
 export default TestPanel;
+

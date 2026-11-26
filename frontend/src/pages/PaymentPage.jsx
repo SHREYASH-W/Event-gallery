@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import QRCode from 'qrcode';
 
 function PaymentPage() {
@@ -32,7 +32,7 @@ function PaymentPage() {
 
   const fetchPaymentRequest = async () => {
     try {
-      const res = await axios.get(`/api/payments/request/${requestId}`);
+      const res = await api.get(`/api/payments/request/${requestId}`);
       const data = res.data;
 
       // Detect transition to confirmed → trigger snap animation
@@ -54,10 +54,10 @@ function PaymentPage() {
       }
 
       if (data.status === 'confirmed') {
-        const ph = await axios.get(`/api/payments/request/${requestId}/photos`);
+        const ph = await api.get(`/api/payments/request/${requestId}/photos`);
         setPhotos(ph.data);
       } else if (data.photo_ids?.length > 0) {
-        const ph = await axios.post('/api/photos/batch', { photo_ids: data.photo_ids });
+        const ph = await api.post('/api/photos/batch', { photo_ids: data.photo_ids });
         setPhotos(ph.data);
       }
     } catch (err) {
@@ -350,3 +350,4 @@ function PaymentPage() {
 }
 
 export default PaymentPage;
+

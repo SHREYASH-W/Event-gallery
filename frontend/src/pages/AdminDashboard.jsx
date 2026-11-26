@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 
 function AdminDashboard() {
   const [photographers, setPhotographers] = useState([]);
@@ -13,8 +13,8 @@ function AdminDashboard() {
   const fetchData = async () => {
     try {
       const [photographersResponse, eventsResponse] = await Promise.all([
-        axios.get('/api/photographers'),
-        axios.get('/api/events')
+        api.get('/api/photographers'),
+        api.get('/api/events')
       ]);
       setPhotographers(photographersResponse.data);
       setEvents(eventsResponse.data);
@@ -102,3 +102,4 @@ function AdminDashboard() {
 }
 
 export default AdminDashboard;
+

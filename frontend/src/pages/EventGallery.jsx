@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 
 function EventGallery() {
   const { eventId }  = useParams();
@@ -18,8 +18,8 @@ function EventGallery() {
   const fetchEventAndPhotos = async () => {
     try {
       const [evRes, phRes] = await Promise.all([
-        axios.get(`/api/events/${eventId}`),
-        axios.get(`/api/events/${eventId}/photos`)
+        api.get(`/api/events/${eventId}`),
+        api.get(`/api/events/${eventId}/photos`)
       ]);
       setEvent(evRes.data);
       setPhotos(phRes.data);
@@ -43,7 +43,7 @@ function EventGallery() {
 
     setChecking(true);
     try {
-      const res = await axios.post('/api/payments/request', {
+      const res = await api.post('/api/payments/request', {
         event_id:  parseInt(eventId),
         guest_email: guestEmail,
         photo_ids:  selectedPhotos
@@ -228,3 +228,4 @@ function EventGallery() {
 }
 
 export default EventGallery;
+

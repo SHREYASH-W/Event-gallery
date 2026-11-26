@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 
 function Home() {
   const [events, setEvents]   = useState([]);
@@ -10,7 +10,7 @@ function Home() {
 
   const fetchEvents = async () => {
     try {
-      const response = await axios.get('/api/events');
+      const response = await api.get('/api/events');
       setEvents(response.data);
     } catch (error) {
       console.error('Error fetching events:', error);
@@ -150,3 +150,4 @@ function Home() {
 }
 
 export default Home;
+
