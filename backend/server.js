@@ -30,7 +30,12 @@ app.use((req, res, next) => {
 
 // Health check
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    db: process.env.DATABASE_URL ? 'DATABASE_URL set' : 'No DATABASE_URL',
+    env: process.env.NODE_ENV
+  });
 });
 
 // One-time seed endpoint (protected by secret)
