@@ -4,6 +4,13 @@ async function seed() {
   try {
     console.log('Seeding database...');
 
+    // Skip seeding if data already exists
+    const existing = await pool.query('SELECT COUNT(*) FROM photographers');
+    if (parseInt(existing.rows[0].count) > 0) {
+      console.log(`Data already exists (${existing.rows[0].count} photographers), skipping seed.`);
+      return;
+    }
+
     // Create two photographers
     const photographer1 = await pool.query(
       `INSERT INTO photographers (name, email, upi_id, bank_email) 
