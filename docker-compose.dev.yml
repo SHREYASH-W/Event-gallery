@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:14-alpine
+    container_name: celebrare-db-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: celebrare_upi
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API (Development mode with hot reload)
+  backend:
+    build: .
+    container_name: celebrare-backend-dev
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: celebrare_upi
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      PORT: 3000
+      NODE_ENV: development
+      FRONTEND_URL: http://localhost:5173
+      WEBHOOK_SECRET: celebrare_secret_key_2024
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/app/backend
+      - /app/node_modules
+    command: sh -c "npm install && node backend/scripts/setupDatabase.js && node backend/scripts/seed.js && npx nodemon backend/server.js"
+
+volumes:
+  postgres_data_dev:
+    driver: local
+
+networks:
+  default:
+    name: celebrare-network-dev

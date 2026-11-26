@@ -1,0 +1,15 @@
+name = "celebrare-email-worker"
+main = "email-worker.js"
+compatibility_date = "2024-01-01"
+
+# Email Worker configuration
+[email]
+name = "celebrare-email-worker"
+
+# Environment variables
+[vars]
+WEBHOOK_URL = "https://your-backend-domain.com/api/webhook/bank-email"
+FORWARD_TO_PHOTOGRAPHER = "true"
+
+# Secrets (set via: wrangler secret put WEBHOOK_SECRET)
+# WEBHOOK_SECRET = "your-webhook-secret-here"

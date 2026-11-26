@@ -1,0 +1,31 @@
+# Docker Compose - Backend Only (Use with Local PostgreSQL)
+# Use this if you can't install PostgreSQL in Docker due to space constraints
+
+version: '3.8'
+
+services:
+  # Backend API only
+  backend:
+    build: .
+    container_name: celebrare-backend
+    restart: unless-stopped
+    environment:
+      DB_HOST: host.docker.internal  # Points to your local PostgreSQL
+      DB_PORT: 5432
+      DB_NAME: celebrare_upi
+      DB_USER: postgres
+      DB_PASSWORD: postgres  # Change this to match your local PostgreSQL password
+      PORT: 3000
+      NODE_ENV: development
+      FRONTEND_URL: http://localhost:5173
+      WEBHOOK_SECRET: celebrare_secret_key_2024
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/app/backend
+      - /app/node_modules
+    command: sh -c "node backend/scripts/setupDatabase.js && node backend/scripts/seed.js && npx nodemon backend/server.js"
+
+networks:
+  default:
+    name: celebrare-network-backend-only
